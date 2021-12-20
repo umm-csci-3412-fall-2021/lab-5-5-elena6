@@ -1,6 +1,11 @@
 package xrate;
 
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Provide access to basic currency exchange rate services.
@@ -8,6 +13,7 @@ import java.io.IOException;
 public class ExchangeRateReader {
 
     private String accessKey;
+    private String baseURL;
 
     /**
      * Construct an exchange rate reader using the given base URL. All requests will
@@ -28,7 +34,7 @@ public class ExchangeRateReader {
          * the full URL.)
          */
 
-        // TODO Your code here
+        this.baseURL = baseURL;
 
         // Reads the Fixer.io API access key from the appropriate
         // environment variable.
@@ -84,10 +90,18 @@ public class ExchangeRateReader {
          *       currency code from the "rates" object. 
          */
 
-        // TODO Your code here
+        String convertedMonth = Integer.toString(month).length() == 1 ? "0" + month : month + "";
+        String convertedDay   = Integer.toString(day).length() == 1   ? "0" + day   : day + "";
 
-        // Remove the next line when you've implemented this method.
-        throw new UnsupportedOperationException();
+        JSONObject result = receiveResponseFromURL(
+                baseURL + year + "-" +
+                        convertedMonth + "-" +
+                        convertedDay +
+                        "?access_key=" + accessKey
+        );
+
+
+        return result.getFloat(currencyCode);
     }
 
     /**
@@ -113,10 +127,29 @@ public class ExchangeRateReader {
          * what's going on, and try to avoid duplicate logic between this and
          * the previous method.
          */
-        
-        // TODO Your code here
+        String convertedMonth = Integer.toString(month).length() == 1 ? "0" + month : month + "";
+        String convertedDay   = Integer.toString(day).length() == 1   ? "0" + day   : day + "";
 
-        // Remove the next line when you've implemented this method.
-        throw new UnsupportedOperationException();
+        JSONObject result = receiveResponseFromURL(
+                baseURL + year + "-" +
+                        convertedMonth + "-" +
+                        convertedDay +
+                        "?access_key=" + accessKey
+        );
+
+
+        assert result != null;
+        return result.getFloat(fromCurrency) / result.getFloat(toCurrency);
+    }
+
+    private JSONObject receiveResponseFromURL(String url){
+        try {
+            InputStream s = new URL(url).openStream();
+            JSONObject jsonObject = new JSONObject(new JSONTokener(s));
+            return jsonObject.getJSONObject("rates");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
