@@ -127,7 +127,19 @@ public class ExchangeRateReader {
          * what's going on, and try to avoid duplicate logic between this and
          * the previous method.
          */
+        String convertedMonth = Integer.toString(month).length() == 1 ? "0" + month : month + "";
+        String convertedDay   = Integer.toString(day).length() == 1   ? "0" + day   : day + "";
 
+        JSONObject result = receiveResponseFromURL(
+                baseURL + year + "-" +
+                        convertedMonth + "-" +
+                        convertedDay +
+                        "?access_key=" + accessKey
+        );
+
+
+        assert result != null;
+        return result.getFloat(fromCurrency) / result.getFloat(toCurrency);
     }
 
     private JSONObject receiveResponseFromURL(String url){
