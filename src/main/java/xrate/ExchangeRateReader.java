@@ -90,10 +90,18 @@ public class ExchangeRateReader {
          *       currency code from the "rates" object. 
          */
 
-        // TODO Your code here
+        String convertedMonth = Integer.toString(month).length() == 1 ? "0" + month : month + "";
+        String convertedDay   = Integer.toString(day).length() == 1   ? "0" + day   : day + "";
 
-        // Remove the next line when you've implemented this method.
-        throw new UnsupportedOperationException();
+        JSONObject result = receiveResponseFromURL(
+                baseURL + year + "-" +
+                        convertedMonth + "-" +
+                        convertedDay +
+                        "?access_key=" + accessKey
+        );
+
+
+        return result.getFloat(currencyCode);
     }
 
     /**
@@ -119,11 +127,7 @@ public class ExchangeRateReader {
          * what's going on, and try to avoid duplicate logic between this and
          * the previous method.
          */
-        
-        // TODO Your code here
 
-        // Remove the next line when you've implemented this method.
-        throw new UnsupportedOperationException();
     }
 
     private JSONObject receiveResponseFromURL(String url){
